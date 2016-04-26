@@ -1,0 +1,30 @@
+# See http://jekyllrb.com/docs/configuration/
+
+# Building
+source: content
+destination: _site
+keep_files: [assets]
+
+# Custom site variables
+mobile_breakpoint: 450
+tablet_breakpoint: 960
+minimum_image_width: 500
+
+# Serving
+#port: 4000
+#host: 0.0.0.0
+
+defaults:
+  -
+    values:
+      layout: "default"
+
+# Configuration for Prose.io content management
+prose:
+  rooturl: "content"
+  media: "content/assets/uploads"
+  ignore: ["_includes", "_layouts", "_plugins"]
+
+# Additional Ruby gems, like the redirect generator.
+gems:
+  - jekyll-redirect-from
