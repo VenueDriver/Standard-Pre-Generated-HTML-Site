@@ -3,4 +3,4 @@ _site
 .vagrant
 npm-debug.log
 node_modules
-aws-credentials.json
+aws-credentials.yml

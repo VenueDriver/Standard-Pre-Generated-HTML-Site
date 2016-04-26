@@ -1,0 +1,4 @@
+domain: 'reference.example'
+environments:
+  - staging
+  - production

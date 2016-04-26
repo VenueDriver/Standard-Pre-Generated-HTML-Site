@@ -70,19 +70,22 @@ You can clean and then rebuild all with:
 
 # Deploying the site
 
-First, get the credentials for the deploy-herringboneeats AWS IAM user.  (Ask Derek Norrbom.)
+First, get the credentials for an AWS IAM user with S3 write permissions.  (Ask Derek Norrbom.)
 
-Add a file to the root of your project folder called aws-credentials.json, with contents like this:
+Or add a file to the root of your project folder called aws-credentials.yml, with contents like this:
 
-    {
-      "AWSAccessKeyId": "...",
-      "AWSSecretKey": "..."
-    }
+    key_id: '...'
+    key_secret: '...'
+
+Then, make sure that your domain name in your `_site.yml` file is correct.
 
 ## Deploy to staging
 
-Your Docker Container is already set up to deploy, as long as you have your credentials set up.  Just
-open a terminal window to the project root and tell it:
+Your development environment is already set up to deploy, as long as you have your
+credentials set up.  Just open a terminal window to the project root and tell it:
 
-    grunt aws_s3:staging
     `docker-compose run web grunt aws_s3:staging`
+
+## Deploy to production
+
+    `docker-compose run web grunt aws_s3:production`

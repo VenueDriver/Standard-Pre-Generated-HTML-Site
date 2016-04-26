@@ -2,7 +2,9 @@ module.exports = function(grunt) {
 
   grunt.initConfig({
     pkg: grunt.file.readJSON('package.json'),
-    aws: grunt.file.readJSON('aws-credentials.json'), // Read the file
+    aws: grunt.file.readYAML('aws-credentials.yml'),
+    site: grunt.file.readYAML('_site.yml'),
+
     responsive_images: {
       build: {
         options: {
@@ -63,40 +65,17 @@ module.exports = function(grunt) {
       }
     },
 
-
     aws_s3: {
       options: {
-        accessKeyId: '<%= aws.AWSAccessKeyId %>', // Use the variables
-        secretAccessKey: '<%= aws.AWSSecretKey %>', // You can also use env variables
-        region: 'us-west-1',
+        accessKeyId: '<%= aws.key_id %>',
+        secretAccessKey: '<%= aws.key_secret %>',
+        region: 'us-east-1',
         progress: 'progressBar',
         uploadConcurrency: 5, // 5 simultaneous uploads
         downloadConcurrency: 5 // 5 simultaneous downloads
-
-      },
-      staging: {
-        options: {
-          bucket: 'staging.herringboneeats.com',
-          differential: true // Only uploads the files that have changed
-        },
-        files: [
-          {expand: true, cwd: '_site', src: ['**'], dest: '/', exclude: '/assets', action: 'upload'},
-          {expand: true, cwd: '_site/assets', src: ['**'], dest: '/assets', action: 'upload',
-            params: {CacheControl: '2592000'}}, /* 30 days, in seconds. */
-        ]
-      },
-      production: {
-        options: {
-          bucket: 'herringboneeats.com',
-          differential: true // Only uploads the files that have changed
-        },
-        files: [
-          {expand: true, cwd: '_site', src: ['**'], dest: '/', exclude: '/assets', action: 'upload'},
-          {expand: true, cwd: '_site/assets', src: ['**'], dest: '/assets', action: 'upload',
-            params: {CacheControl: '2592000'}}, /* 30 days, in seconds. */
-        ]
       }
     },
+
     shell: {
       jekyllBuild : {
         command : 'jekyll build'
@@ -141,6 +120,23 @@ module.exports = function(grunt) {
       }
     }
   });
+
+  var environments = grunt.config.get('site.environments');
+  for(var i = 0; i < environments.length; i++) {
+    var environment = environments[i];
+
+    grunt.config(['aws_s3', environment], {
+      options: {
+        bucket: environment + '.' + '<%= site.domain %>',
+        differential: true // Only uploads the files that have changed
+      },
+      files: [
+        {expand: true, cwd: '_site', src: ['**'], dest: '/', exclude: '/assets', action: 'upload'},
+        {expand: true, cwd: '_site/assets', src: ['**'], dest: '/assets', action: 'upload',
+          params: {CacheControl: '2592000'}}, /* 30 days, in seconds. */
+      ]
+    });
+  }
 
   grunt.loadNpmTasks('grunt-aws-s3');
   grunt.loadNpmTasks('grunt-responsive-images');
